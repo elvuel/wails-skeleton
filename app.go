@@ -27,6 +27,7 @@ type BootstrapData struct {
 	DatabaseDriver    string   `json:"databaseDriver"`
 	DatabasePath      string   `json:"databasePath"`
 	DatabaseReady     bool     `json:"databaseReady"`
+	TrayEnabled       bool     `json:"trayEnabled"`
 	HideWindowOnClose bool     `json:"hideWindowOnClose"`
 	Message           string   `json:"message"`
 	StartupError      string   `json:"startupError"`
@@ -36,6 +37,7 @@ type App struct {
 	ctx          context.Context
 	locale       string
 	db           *databaseState
+	tray         *trayService
 	startupError string
 	quitting     atomic.Bool
 	mu           sync.RWMutex
@@ -53,20 +55,28 @@ func (a *App) startup(ctx context.Context) {
 	db, err := openDatabase(appName)
 	if err != nil {
 		a.setStartupError(err)
-		return
 	}
 
-	storedLocale, err := db.GetSetting(localeSettingKey)
-	if err != nil {
-		a.setStartupError(err)
+	storedLocale := ""
+	if db != nil {
+		storedLocale, err = db.GetSetting(localeSettingKey)
+		if err != nil {
+			a.setStartupError(err)
+		}
 	}
 
+	tray := newTrayService(a)
 	a.mu.Lock()
 	a.db = db
+	a.tray = tray
 	if normalized, ok := normalizeLocale(storedLocale); ok {
 		a.locale = normalized
 	}
+	locale := a.locale
 	a.mu.Unlock()
+
+	tray.SetLocale(locale)
+	tray.Start()
 }
 
 func (a *App) shutdown(context.Context) {
@@ -75,7 +85,13 @@ func (a *App) shutdown(context.Context) {
 	a.mu.Lock()
 	db := a.db
 	a.db = nil
+	tray := a.tray
+	a.tray = nil
 	a.mu.Unlock()
+
+	if tray != nil {
+		tray.Stop()
+	}
 
 	if err := db.Close(); err != nil {
 		a.setStartupError(err)
@@ -95,10 +111,15 @@ func (a *App) SetLocale(locale string) (BootstrapData, error) {
 	a.mu.Lock()
 	a.locale = normalized
 	db := a.db
+	tray := a.tray
 	a.mu.Unlock()
 
 	if err := db.SetSetting(localeSettingKey, normalized); err != nil {
 		return a.snapshot(), fmt.Errorf("persist locale: %w", err)
+	}
+
+	if tray != nil {
+		tray.SetLocale(normalized)
 	}
 
 	return a.snapshot(), nil
@@ -137,9 +158,13 @@ func (a *App) snapshot() BootstrapData {
 	message := readyMessage
 	dbReady := false
 	dbPath := ""
+	trayEnabled := false
 	if a.db != nil {
 		dbReady = true
 		dbPath = a.db.Path()
+	}
+	if a.tray != nil {
+		trayEnabled = true
 	}
 	if a.startupError != "" {
 		message = a.startupError
@@ -152,7 +177,8 @@ func (a *App) snapshot() BootstrapData {
 		DatabaseDriver:    "sqlite",
 		DatabasePath:      dbPath,
 		DatabaseReady:     dbReady,
-		HideWindowOnClose: false,
+		TrayEnabled:       trayEnabled,
+		HideWindowOnClose: true,
 		Message:           message,
 		StartupError:      a.startupError,
 	}

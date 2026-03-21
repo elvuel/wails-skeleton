@@ -7,6 +7,7 @@ export namespace main {
 	    databaseDriver: string;
 	    databasePath: string;
 	    databaseReady: boolean;
+	    trayEnabled: boolean;
 	    hideWindowOnClose: boolean;
 	    message: string;
 	    startupError: string;
@@ -23,6 +24,7 @@ export namespace main {
 	        this.databaseDriver = source["databaseDriver"];
 	        this.databasePath = source["databasePath"];
 	        this.databaseReady = source["databaseReady"];
+	        this.trayEnabled = source["trayEnabled"];
 	        this.hideWindowOnClose = source["hideWindowOnClose"];
 	        this.message = source["message"];
 	        this.startupError = source["startupError"];
