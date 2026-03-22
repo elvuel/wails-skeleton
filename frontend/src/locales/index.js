@@ -11,6 +11,20 @@ export const locales = {
 
 export const SUPPORTED_LOCALES = Object.freeze(Object.keys(locales))
 
+const LOCALE_RESOLVER_KEY = Symbol.for('wails-skeleton.locale-resolver')
+const globalScope = globalThis
+
+function createLocaleResolver() {
+  return {
+    resolve(locale) {
+      return locales[locale] ?? locales[FALLBACK_LOCALE]
+    }
+  }
+}
+
+const localeResolver =
+  globalScope[LOCALE_RESOLVER_KEY] ?? (globalScope[LOCALE_RESOLVER_KEY] = createLocaleResolver())
+
 export function resolveLocale(locale) {
-  return locales[locale] ?? locales[FALLBACK_LOCALE]
+  return localeResolver.resolve(locale)
 }
