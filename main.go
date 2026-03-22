@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 
+	"wails-skeleton/app"
+
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
@@ -12,10 +14,10 @@ import (
 var assets embed.FS
 
 func main() {
-	app := NewApp()
+	application := app.NewApp()
 
 	err := wails.Run(&options.App{
-		Title:             appName,
+		Title:             app.AppName,
 		Width:             1180,
 		Height:            820,
 		MinWidth:          980,
@@ -25,10 +27,10 @@ func main() {
 			Assets: assets,
 		},
 		BackgroundColour: &options.RGBA{R: 248, G: 245, B: 238, A: 1},
-		OnStartup:        app.startup,
-		OnShutdown:       app.shutdown,
+		OnStartup:        application.Startup,
+		OnShutdown:       application.Shutdown,
 		Bind: []interface{}{
-			app,
+			application,
 		},
 	})
 

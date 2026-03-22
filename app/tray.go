@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	_ "embed"
@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	//go:embed build/windows/icon.ico
+	//go:embed assets/windows/icon.ico
 	windowsTrayIcon []byte
 
-	//go:embed build/appicon.png
+	//go:embed assets/appicon.png
 	defaultTrayIcon []byte
 )
 
@@ -50,8 +50,8 @@ func (t *trayService) onReady() {
 		systray.SetIcon(icon)
 	}
 
-	systray.SetTitle(appName)
-	systray.SetTooltip(appName)
+	systray.SetTitle(AppName)
+	systray.SetTooltip(AppName)
 
 	showItem := systray.AddMenuItem("Show Window", "Show the Wails main window")
 	hideItem := systray.AddMenuItem("Hide Window", "Hide the Wails main window")

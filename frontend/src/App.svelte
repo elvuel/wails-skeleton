@@ -111,20 +111,24 @@
   <title>{state.appName}</title>
 </svelte:head>
 
-<main class="shell">
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="badge">{text.badge}</p>
-      <h1>{text.title}</h1>
-      <p class="subtitle">{text.subtitle}</p>
+<main class="p-8 max-[900px]:p-[18px]">
+  <section
+    class="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-6 rounded-[28px] border border-[rgba(66,40,14,0.12)] bg-[rgba(255,250,240,0.82)] p-8 shadow-[0_28px_80px_rgba(87,46,18,0.14)] backdrop-blur-[16px] max-[900px]:grid-cols-1 max-[900px]:p-6"
+  >
+    <div>
+      <p class="m-0 text-[0.82rem] font-extrabold uppercase tracking-[0.18em] text-[#8f3811]">{text.badge}</p>
+      <h1 class="mb-3 mt-2 text-[clamp(2.4rem,4vw,4.4rem)] leading-[0.94] tracking-[-0.05em]">{text.title}</h1>
+      <p class="m-0 max-w-[54rem] text-[1.02rem] leading-[1.7] text-[#6b5a4b]">{text.subtitle}</p>
     </div>
 
-    <div class="locale-switcher">
+    <div class="flex flex-wrap gap-[10px]">
       {#each state.supportedLocales as entry}
         <button
-          class:active={entry === locale}
+          class={`cursor-pointer rounded-full border-0 px-[18px] py-3 transition-[transform,background-color,color,opacity] duration-150 ease-out hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-[0.55] ${
+            entry === locale ? 'bg-[#bf5a2b] text-[#fffaf2]' : 'bg-[rgba(35,23,15,0.06)] text-[#23170f]'
+          }`}
           disabled={busy}
-          on:click={() => handleLocaleChange(entry)}
+          onclick={() => handleLocaleChange(entry)}
           type="button"
         >
           {entry}
@@ -133,73 +137,98 @@
     </div>
   </section>
 
-  <section class="grid">
-    <article class="panel panel-accent">
-      <div class="panel-header">
+  <section class="mt-5 grid grid-cols-2 gap-5 max-[900px]:grid-cols-1">
+    <article
+      class="rounded-3xl border border-[rgba(66,40,14,0.12)] bg-[linear-gradient(160deg,rgba(191,90,43,0.11),rgba(255,255,255,0.74)),rgba(255,255,255,0.72)] p-6 shadow-[0_18px_36px_rgba(96,53,23,0.08)]"
+    >
+      <div class="mb-[18px] flex items-center justify-between gap-3 text-[0.92rem] font-extrabold uppercase tracking-[0.08em]">
         <span>{text.status}</span>
-        <span class="muted">{state.message || '...'}</span>
+        <span class="text-[0.78rem] font-bold text-[#6b5a4b]">{state.message || '...'}</span>
       </div>
 
-      <div class="metric-grid">
-        <div class="metric">
-          <span>{text.appStatus}</span>
-          <strong>{state.message || 'ready'}</strong>
+      <div class="grid grid-cols-2 gap-[14px] max-[900px]:grid-cols-1">
+        <div class="flex flex-col gap-2 rounded-[18px] bg-[rgba(255,255,255,0.64)] p-4">
+          <span class="text-[0.82rem] uppercase tracking-[0.08em] text-[#6b5a4b]">{text.appStatus}</span>
+          <strong class="text-[1.02rem] leading-[1.5]">{state.message || 'ready'}</strong>
         </div>
 
-        <div class="metric">
-          <span>{text.locale}</span>
-          <strong>{locale}</strong>
+        <div class="flex flex-col gap-2 rounded-[18px] bg-[rgba(255,255,255,0.64)] p-4">
+          <span class="text-[0.82rem] uppercase tracking-[0.08em] text-[#6b5a4b]">{text.locale}</span>
+          <strong class="text-[1.02rem] leading-[1.5]">{locale}</strong>
         </div>
 
-        <div class="metric">
-          <span>{text.supportedLocales}</span>
-          <strong>{(state.supportedLocales || []).join(', ') || '-'}</strong>
+        <div class="flex flex-col gap-2 rounded-[18px] bg-[rgba(255,255,255,0.64)] p-4">
+          <span class="text-[0.82rem] uppercase tracking-[0.08em] text-[#6b5a4b]">{text.supportedLocales}</span>
+          <strong class="text-[1.02rem] leading-[1.5]">{(state.supportedLocales || []).join(', ') || '-'}</strong>
         </div>
       </div>
     </article>
 
-    <article class="panel">
-      <div class="panel-header">
+    <article class="rounded-3xl border border-[rgba(66,40,14,0.12)] bg-[rgba(255,255,255,0.72)] p-6 shadow-[0_18px_36px_rgba(96,53,23,0.08)]">
+      <div class="mb-[18px] flex items-center justify-between gap-3 text-[0.92rem] font-extrabold uppercase tracking-[0.08em]">
         <span>{text.features}</span>
-        <span class="muted">{state.appName}</span>
+        <span class="text-[0.78rem] font-bold text-[#6b5a4b]">{state.appName}</span>
       </div>
 
-      <div class="detail-row">
-        <span>{text.status}</span>
-        <code>{state.message || 'ready'}</code>
-      </div>
+      <div class="space-y-3">
+        <div class="flex flex-col gap-2 rounded-[18px] bg-[rgba(255,255,255,0.64)] p-4">
+          <span class="text-[0.82rem] uppercase tracking-[0.08em] text-[#6b5a4b]">{text.status}</span>
+          <code class="break-words text-[#23170f]">{state.message || 'ready'}</code>
+        </div>
 
-      <div class="detail-row">
-        <span>{text.startupError}</span>
-        <code>{state.startupError || text.noError}</code>
-      </div>
+        <div class="flex flex-col gap-2 rounded-[18px] bg-[rgba(255,255,255,0.64)] p-4">
+          <span class="text-[0.82rem] uppercase tracking-[0.08em] text-[#6b5a4b]">{text.startupError}</span>
+          <code class="break-words text-[#23170f]">{state.startupError || text.noError}</code>
+        </div>
 
-      <div class="detail-row">
-        <span>{text.locale}</span>
-        <code>{text.localeHint}</code>
+        <div class="flex flex-col gap-2 rounded-[18px] bg-[rgba(255,255,255,0.64)] p-4">
+          <span class="text-[0.82rem] uppercase tracking-[0.08em] text-[#6b5a4b]">{text.locale}</span>
+          <code class="break-words text-[#23170f]">{text.localeHint}</code>
+        </div>
       </div>
     </article>
 
-    <article class="panel">
-      <div class="panel-header">
+    <article class="rounded-3xl border border-[rgba(66,40,14,0.12)] bg-[rgba(255,255,255,0.72)] p-6 shadow-[0_18px_36px_rgba(96,53,23,0.08)]">
+      <div class="mb-[18px] flex items-center justify-between gap-3 text-[0.92rem] font-extrabold uppercase tracking-[0.08em]">
         <span>{text.actions}</span>
-        <span class="muted">{busy ? 'busy' : 'ready'}</span>
+        <span class="text-[0.78rem] font-bold text-[#6b5a4b]">{busy ? 'busy' : 'ready'}</span>
       </div>
 
-      <div class="actions">
-        <button disabled={busy} on:click={showWindow} type="button">{text.showWindow}</button>
-        <button class="ghost" disabled={busy} on:click={hideWindow} type="button">{text.hideWindow}</button>
-        <button class="danger" disabled={busy} on:click={quitApp} type="button">{text.quit}</button>
+      <div class="flex flex-wrap gap-3">
+        <button
+          class="cursor-pointer rounded-full border-0 bg-[#bf5a2b] px-[18px] py-3 text-[#fffaf2] transition-[transform,background-color,color,opacity] duration-150 ease-out hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-[0.55]"
+          disabled={busy}
+          onclick={showWindow}
+          type="button"
+        >
+          {text.showWindow}
+        </button>
+        <button
+          class="cursor-pointer rounded-full border-0 bg-[rgba(35,23,15,0.08)] px-[18px] py-3 text-[#23170f] transition-[transform,background-color,color,opacity] duration-150 ease-out hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-[0.55]"
+          disabled={busy}
+          onclick={hideWindow}
+          type="button"
+        >
+          {text.hideWindow}
+        </button>
+        <button
+          class="cursor-pointer rounded-full border-0 bg-[#8a1c1c] px-[18px] py-3 text-[#fffaf2] transition-[transform,background-color,color,opacity] duration-150 ease-out hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-[0.55]"
+          disabled={busy}
+          onclick={quitApp}
+          type="button"
+        >
+          {text.quit}
+        </button>
       </div>
     </article>
 
-    <article class="panel">
-      <div class="panel-header">
+    <article class="rounded-3xl border border-[rgba(66,40,14,0.12)] bg-[rgba(255,255,255,0.72)] p-6 shadow-[0_18px_36px_rgba(96,53,23,0.08)]">
+      <div class="mb-[18px] flex items-center justify-between gap-3 text-[0.92rem] font-extrabold uppercase tracking-[0.08em]">
         <span>{text.tips}</span>
-        <span class="muted">{state.appName}</span>
+        <span class="text-[0.78rem] font-bold text-[#6b5a4b]">{state.appName}</span>
       </div>
 
-      <ul class="notes">
+      <ul class="m-0 list-disc space-y-[10px] pl-[18px] leading-[1.7] text-[#6b5a4b]">
         {#each text.notes as note}
           <li>{note}</li>
         {/each}

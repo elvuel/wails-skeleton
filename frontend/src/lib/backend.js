@@ -1,5 +1,5 @@
 function getAppBridge() {
-	const app = window?.go?.main?.App
+	const app = window?.go?.app?.App
 	if (!app) {
 		throw new Error('Wails backend bridge is unavailable. Start the app with `wails dev` or `wails build`.')
 	}

@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	appName          = "wails-skeleton"
+	AppName          = "wails-skeleton"
 	defaultLocale    = "zh-CN"
 	readyMessage     = "ready"
 	localeSettingKey = "locale"
@@ -49,10 +49,10 @@ func NewApp() *App {
 	}
 }
 
-func (a *App) startup(ctx context.Context) {
+func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 
-	db, err := openDatabase(appName)
+	db, err := openDatabase(AppName)
 	if err != nil {
 		a.setStartupError(err)
 	}
@@ -79,7 +79,7 @@ func (a *App) startup(ctx context.Context) {
 	tray.Start()
 }
 
-func (a *App) shutdown(context.Context) {
+func (a *App) Shutdown(context.Context) {
 	a.quitting.Store(true)
 
 	a.mu.Lock()
@@ -171,7 +171,7 @@ func (a *App) snapshot() BootstrapData {
 	}
 
 	return BootstrapData{
-		AppName:           appName,
+		AppName:           AppName,
 		Locale:            a.locale,
 		SupportedLocales:  append([]string(nil), supportedLocales...),
 		DatabaseDriver:    "sqlite",
