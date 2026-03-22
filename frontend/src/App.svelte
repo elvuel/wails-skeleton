@@ -1,60 +1,12 @@
 <script>
   import { onMount } from 'svelte'
   import { bootstrap, hideWindow, quitApp, setLocale, showWindow } from './lib/backend'
-
-  const copy = {
-    'zh-CN': {
-      badge: 'Wails + Svelte Skeleton',
-      title: '桌面骨架已就绪',
-      subtitle: '内置多语言和窗口控制入口，适合直接往业务层扩展。',
-      status: '运行状态',
-      features: '能力面板',
-      actions: '窗口动作',
-      tips: '说明',
-      appStatus: '应用状态',
-      locale: '当前语言',
-      supportedLocales: '支持语言',
-      localeHint: '切换语言会立即更新界面文案',
-      showWindow: '显示窗口',
-      hideWindow: '隐藏窗口',
-      quit: '退出应用',
-      startupError: '启动错误',
-      noError: '无',
-      notes: [
-        '当前示例聚焦 Wails 与 Svelte 的基础通信。',
-        '语言切换调用后端方法并实时刷新界面内容。',
-        '这个首页仅提供骨架状态，你可以在此基础上继续拆业务模块。'
-      ]
-    },
-    'en-US': {
-      badge: 'Wails + Svelte Skeleton',
-      title: 'Desktop skeleton is ready',
-      subtitle: 'Built-in i18n and window controls so you can move straight into app features.',
-      status: 'Runtime Status',
-      features: 'Feature Panel',
-      actions: 'Window Actions',
-      tips: 'Notes',
-      appStatus: 'App Status',
-      locale: 'Current Locale',
-      supportedLocales: 'Supported Locales',
-      localeHint: 'Switching locale updates UI copy immediately',
-      showWindow: 'Show Window',
-      hideWindow: 'Hide Window',
-      quit: 'Quit App',
-      startupError: 'Startup Error',
-      noError: 'None',
-      notes: [
-        'This example focuses on the baseline Wails and Svelte bridge.',
-        'Locale changes call backend methods and refresh the UI in place.',
-        'This landing page is intentionally minimal and meant to be replaced by your domain modules.'
-      ]
-    }
-  }
+  import { DEFAULT_LOCALE, SUPPORTED_LOCALES, resolveLocale } from './locales'
 
   const fallbackState = {
     appName: 'wails-skeleton',
-    locale: 'zh-CN',
-    supportedLocales: ['zh-CN', 'en-US'],
+    locale: DEFAULT_LOCALE,
+    supportedLocales: SUPPORTED_LOCALES,
     message: '',
     startupError: ''
   }
@@ -63,7 +15,7 @@
   let locale = fallbackState.locale
   let busy = false
 
-  $: text = copy[locale] ?? copy['en-US']
+  $: text = resolveLocale(locale)
 
   onMount(async () => {
     await loadState()
